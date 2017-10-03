@@ -19,9 +19,7 @@ class Song {
     init() {}
     
     init?(path aPath: String, type: String = "mp3") {
-        if let bundlePath = Bundle.main.path(forResource: aPath, ofType: type) {
-            url = URL(fileURLWithPath: bundlePath)
-        }
+        url = URL(fileURLWithPath: bundlePath)
         if let url = url {
             self.item = AVPlayerItem(url: url)
             metadata = MetaData(withAVPlayerItem: self.item)
