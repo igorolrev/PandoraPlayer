@@ -50,5 +50,12 @@ class MetaData {
         albumName = playerItem.albumTitle
         artist = playerItem.artist
         duration = playerItem.playbackDuration
+        MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = [
+            MPMediaItemPropertyTitle: title,
+            MPMediaItemPropertyAlbumTitle: albumName ?? "",
+            MPMediaItemPropertyArtist: albumName ?? "",
+            MPMediaItemPropertyPlaybackDuration: duration
+        ]
+        MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo?[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(image: artwork)
     }
 }

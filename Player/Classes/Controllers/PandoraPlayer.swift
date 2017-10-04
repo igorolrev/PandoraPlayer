@@ -337,6 +337,7 @@ open class PandoraPlayer: UIViewController {
 	private func configurePlayer() {
         configurePlayerControls()
         configurePlayerTimeSlider()
+        setupNowPlayingInfoCenter()
 		player = EZAudioPlayer()
         do {
             try AKSettings.setSession(category: AKSettings.SessionCategory.playback)
@@ -399,6 +400,19 @@ open class PandoraPlayer: UIViewController {
         }
         animatePlayToggling()
         self.controlsView.isPlaying = self.player.isPlaying
+    }
+    
+    private func setupNowPlayingInfoCenter() {
+        UIApplication.sharedApplication().beginReceivingRemoteControlEvents();
+        MPRemoteCommandCenter.sharedCommandCenter().playCommand.addTargetWithHandler {event in
+            self.player.play()
+            self.updateNowPlayingInfoCenter()
+            return .Success
+        }
+        MPRemoteCommandCenter.sharedCommandCenter().pauseCommand.addTargetWithHandler {event in
+            self.player.pause()
+            return .Success
+        }
     }
     
     fileprivate func animatePlayToggling(duration: TimeInterval = animationInterval) {
