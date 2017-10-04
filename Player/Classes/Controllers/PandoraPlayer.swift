@@ -338,6 +338,11 @@ open class PandoraPlayer: UIViewController {
         configurePlayerControls()
         configurePlayerTimeSlider()
 		player = EZAudioPlayer()
+        do {
+            try AKSettings.setSession(category: AKSettings.SessionCategory.playback)
+        }catch{
+            print(error)
+        }
 		player.delegate = self
 		updatePlaybackStatus()
         currentSongIndex = 0
