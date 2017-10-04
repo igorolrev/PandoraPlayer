@@ -38,7 +38,7 @@ fileprivate let defaultStartProgress: Float = 0.0
 fileprivate let asyncOffset: Float = 0.2
 
 open class PandoraPlayer: UIViewController {
-	
+    
     // MARK: Public
     
     public var playImmediately: Bool = false
@@ -47,7 +47,7 @@ open class PandoraPlayer: UIViewController {
     // MARK: Instance Variables
     
     fileprivate var library: [Song] = []
-
+    
     fileprivate var player: EZAudioPlayer!
     fileprivate var originalPlayList: [Song] = []
     fileprivate var count: Int = 0
@@ -58,7 +58,7 @@ open class PandoraPlayer: UIViewController {
     fileprivate var beeingSeek = false
     fileprivate var designated: Bool = false
     fileprivate var isReady: Bool = false
-
+    
     fileprivate func rewindBackward() {
         if currentSongIndex > 0 {
             currentSongIndex -= 1
@@ -98,9 +98,9 @@ open class PandoraPlayer: UIViewController {
     
     @IBOutlet fileprivate weak var blurredAlbumImageView: UIImageView!
     @IBOutlet fileprivate weak var playerSongListView: PlayerSongList!
-	@IBOutlet fileprivate weak var sliderView: PlayerSlider!
-	@IBOutlet fileprivate weak var waveVisualizer: WaveVisualizer!
-	@IBOutlet fileprivate weak var controlsView: PlayerControls!
+    @IBOutlet fileprivate weak var sliderView: PlayerSlider!
+    @IBOutlet fileprivate weak var waveVisualizer: WaveVisualizer!
+    @IBOutlet fileprivate weak var controlsView: PlayerControls!
     @IBOutlet private weak var songNameLabel: UILabel!
     @IBOutlet private weak var songAlbumLabel: UILabel!
     @IBOutlet fileprivate var fadeImageView: UIImageView!
@@ -134,7 +134,7 @@ open class PandoraPlayer: UIViewController {
     }
     
     /**
-        Player View Controller initializator with AVPlayerItem.
+     Player View Controller initializator with AVPlayerItem.
      
      - parameter item: AVPlayerItem.
      
@@ -158,7 +158,7 @@ open class PandoraPlayer: UIViewController {
         playerVC.readyForPlay()
         return playerVC
     }
-
+    
     /**
      Player View Controller initializator with MPMediaItem.
      
@@ -199,8 +199,8 @@ open class PandoraPlayer: UIViewController {
         }
         
         playerVC.library = outputItems
-
-        group.notify(queue: DispatchQueue.main) { _ in
+        
+        group.notify(queue: DispatchQueue.main) {
             assert(outputItems.count > 0)
             playerVC.library = outputItems
             playerVC.readyForPlay()
@@ -215,7 +215,7 @@ open class PandoraPlayer: UIViewController {
         super.viewDidLoad()
         configure()
     }
-
+    
     override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -230,12 +230,12 @@ open class PandoraPlayer: UIViewController {
     
     private func configure() {
         configureNavigationBar()
-		configurePlayer()
+        configurePlayer()
         configurePlayerSongListView()
     }
-	
+    
     private func configurePlayerSongListView() {
-		playerSongListView.delegate = self
+        playerSongListView.delegate = self
         playerSongListView.configure(with: library)
     }
     
@@ -243,7 +243,7 @@ open class PandoraPlayer: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
         title = nowPlaying
     }
@@ -254,7 +254,7 @@ open class PandoraPlayer: UIViewController {
     }
     
     // MARK: Player
-
+    
     fileprivate func readyForPlay() {
         isReady = true
         originalPlayList = library
@@ -266,12 +266,12 @@ open class PandoraPlayer: UIViewController {
         }
     }
     
-	fileprivate func rewindForward() {
-		if currentSongIndex < library.count {
-			currentSongIndex += 1
-		}
-		updatePlaybackStatus()
-	}
+    fileprivate func rewindForward() {
+        if currentSongIndex < library.count {
+            currentSongIndex += 1
+        }
+        updatePlaybackStatus()
+    }
     
     fileprivate func reloadPlayer() {
         guard let songItem = currentSong,
@@ -283,7 +283,7 @@ open class PandoraPlayer: UIViewController {
         
         updateForColors(titleColor)
         self.sliderView.duration = currentSong?.metadata?.duration ?? 0
-
+        
         playerSongListView.setCurrentIndex(index: currentSongIndex, animated: true)
         
         player.audioFile = EZAudioFile(url: url)
@@ -324,34 +324,34 @@ open class PandoraPlayer: UIViewController {
         songNameLabel.changeAnimated(metadata.title ?? unknown, color: colors?.primaryColor ?? .green)
         songAlbumLabel.changeAnimated(metadata.albumName ?? unknown, color: .lightGray)
     }
-	
-	fileprivate var currentSong: Song? {
-		guard self.currentSongIndex >= 0,
-			currentSongIndex < self.library.count else {
-			return nil
-		}
-		let song = library[self.currentSongIndex]
-		return song
-	}
-	
-	private func configurePlayer() {
+    
+    fileprivate var currentSong: Song? {
+        guard self.currentSongIndex >= 0,
+            currentSongIndex < self.library.count else {
+                return nil
+        }
+        let song = library[self.currentSongIndex]
+        return song
+    }
+    
+    private func configurePlayer() {
         configurePlayerControls()
         configurePlayerTimeSlider()
         setupNowPlayingInfoCenter()
-		player = EZAudioPlayer()
+        player = EZAudioPlayer()
         do {
-            try AKSettings.setSession(category: AKSettings.SessionCategory.playback)
+            try AKSettings.setSession(category: AKSettings.SessionCategory.playback, with: [])
         }catch{
             print(error)
         }
-		player.delegate = self
-		updatePlaybackStatus()
+        player.delegate = self
+        updatePlaybackStatus()
         currentSongIndex = 0
     }
-
-	fileprivate func updatePlaybackStatus() {
-		self.controlsView.isPlaying = self.player.isPlaying
-	}
+    
+    fileprivate func updatePlaybackStatus() {
+        self.controlsView.isPlaying = self.player.isPlaying
+    }
     
     fileprivate func resetPlaylist() {
         resetPendingTasks()
@@ -384,7 +384,7 @@ open class PandoraPlayer: UIViewController {
             self.currentSongIndex = 0
         }
     }
-	
+    
     fileprivate func togglePlay() {
         guard let audioFile = player.audioFile, audioFile.url == currentSong?.url else {
             reloadPlayer()
@@ -403,15 +403,16 @@ open class PandoraPlayer: UIViewController {
     }
     
     private func setupNowPlayingInfoCenter() {
-        UIApplication.sharedApplication().beginReceivingRemoteControlEvents();
-        MPRemoteCommandCenter.sharedCommandCenter().playCommand.addTargetWithHandler {event in
+        UIApplication.shared.beginReceivingRemoteControlEvents();
+        MPRemoteCommandCenter.shared().playCommand.isEnabled = true
+        MPRemoteCommandCenter.shared().pauseCommand.isEnabled = true
+        MPRemoteCommandCenter.shared().playCommand.addTarget {event in
             self.player.play()
-            self.updateNowPlayingInfoCenter()
-            return .Success
+            return .success
         }
-        MPRemoteCommandCenter.sharedCommandCenter().pauseCommand.addTargetWithHandler {event in
+        MPRemoteCommandCenter.shared().pauseCommand.addTarget {event in
             self.player.pause()
-            return .Success
+            return .success
         }
     }
     
@@ -440,23 +441,23 @@ open class PandoraPlayer: UIViewController {
         }
     }
     
-	private func updateProgress(time: CMTime) {
-		guard !beeingSeek else {
-			beeingSeek = false
-			return
-		}
-		
-		let currentSong = library[currentSongIndex]
-		
-		guard let duration = currentSong.metadata?.duration, duration > 0 else {
-			self.sliderView.progress = 0
-			return
-		}
-		
-		let seconds = Float(CMTimeGetSeconds(time))
-		self.sliderView.duration = duration
-		self.sliderView.progress = seconds / Float(duration)
-	}
+    private func updateProgress(time: CMTime) {
+        guard !beeingSeek else {
+            beeingSeek = false
+            return
+        }
+        
+        let currentSong = library[currentSongIndex]
+        
+        guard let duration = currentSong.metadata?.duration, duration > 0 else {
+            self.sliderView.progress = 0
+            return
+        }
+        
+        let seconds = Float(CMTimeGetSeconds(time))
+        self.sliderView.duration = duration
+        self.sliderView.progress = seconds / Float(duration)
+    }
     
     private func configurePlayerControls() {
         controlsView.status = isReady ? .Ready: .Loading
@@ -464,23 +465,25 @@ open class PandoraPlayer: UIViewController {
     }
     
     private func configurePlayerTimeSlider() {
-		sliderView.delegate = self
-		sliderView.progress = defaultStartProgress
+        sliderView.delegate = self
+        sliderView.progress = defaultStartProgress
     }
-	
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
     
-// MARK: Actions
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: Actions
     
     @IBAction func closeButtonDidClick(_ sender: Any) {
         player = nil
-        onClose?()
+        onClose?({
+            
+            }())
     }
     
     
-// MARK: Helpers
+    // MARK: Helpers
     
     static func pandoraPlayerInstance() -> PandoraPlayer {
         let storyboard = UIStoryboard(name: storyboardIdentifier, bundle: Bundle(for: PandoraPlayer.classForCoder()))
@@ -503,22 +506,22 @@ extension PandoraPlayer: PlayerSongListDelegate {
         blurredAlbumImageView.alpha = origin.activity
         fadeImageView.alpha = destination.activity
     }
-
-	func currentSongDidChanged(index: Int) {
-		self.currentSongIndex = index
+    
+    func currentSongDidChanged(index: Int) {
+        self.currentSongIndex = index
     }
-	
-	func next() {
-		updatePlaybackStatus()
-	}
-	
-	func didTap() {
+    
+    func next() {
+        updatePlaybackStatus()
+    }
+    
+    func didTap() {
         togglePlay()
-	}
-	
-	func previous() {
-		updatePlaybackStatus()
-	}
+    }
+    
+    func previous() {
+        updatePlaybackStatus()
+    }
     
     func prefetchItems(at indices: [Int]) {
         for index in indices {
@@ -529,14 +532,14 @@ extension PandoraPlayer: PlayerSongListDelegate {
                 guard !item.isCancelled else { return }
                 guard let image = self.library[index].metadata?.artwork else { return }
                 guard !item.isCancelled else { return }
-				image.getColors(scaleDownSize: CGSize(width: scaleDownSizeWidth, height: scaleDownSizeHeight), completionHandler: { (colors) in
+                image.getColors(scaleDownSize: CGSize(width: scaleDownSizeWidth, height: scaleDownSizeHeight), completionHandler: { (colors) in
                     guard !item.isCancelled else { return }
-					self.library[index].colors = colors
-					DispatchQueue.main.async(execute: {
-						if self.currentSongIndex == index {
+                    self.library[index].colors = colors
+                    DispatchQueue.main.async(execute: {
+                        if self.currentSongIndex == index {
                             self.updateForColors(colors)
-						}
-					})
+                        }
+                    })
                 })
             })
             tasks[index] = item
@@ -548,79 +551,79 @@ extension PandoraPlayer: PlayerSongListDelegate {
 // MARK: PlayerControlsDelegate
 
 extension PandoraPlayer: PlayerControlsDelegate {
-	
-	func onRepeat() {
+    
+    func onRepeat() {
         self.isRepeatModeOn = !self.isRepeatModeOn
-	}
-	
-	func onRewindBack() {
-		rewindBackward()
     }
-	
-	func onPlay() {
-		togglePlay()
-	}
-	
-	func onRewindForward() {
+    
+    func onRewindBack() {
+        rewindBackward()
+    }
+    
+    func onPlay() {
+        togglePlay()
+    }
+    
+    func onRewindForward() {
         rewindForward()
-	}
-	
-	func onShuffle() {
+    }
+    
+    func onShuffle() {
         self.isShuffleModeOn = !self.isShuffleModeOn
-	}
+    }
 }
 
 // MARK: PlayerSliderProtocol
 
 extension PandoraPlayer: PlayerSliderProtocol {
-	func onValueChanged(progress: Float, timePast: TimeInterval) {
-		beeingSeek = true
-		let frame = Int64(Float(player.audioFile.totalFrames) * progress)
-		self.player.seek(toFrame: frame)
-	}
+    func onValueChanged(progress: Float, timePast: TimeInterval) {
+        beeingSeek = true
+        let frame = Int64(Float(player.audioFile.totalFrames) * progress)
+        self.player.seek(toFrame: frame)
+    }
 }
 
 // MARK: EZAudioPlayerDelegate
 
 extension PandoraPlayer: EZAudioPlayerDelegate {
-	public func audioPlayer(_ audioPlayer: EZAudioPlayer!, playedAudio buffer: UnsafeMutablePointer<UnsafeMutablePointer<Float>?>!, withBufferSize bufferSize: UInt32, withNumberOfChannels numberOfChannels: UInt32, in audioFile: EZAudioFile!) {
-	
+    public func audioPlayer(_ audioPlayer: EZAudioPlayer!, playedAudio buffer: UnsafeMutablePointer<UnsafeMutablePointer<Float>?>!, withBufferSize bufferSize: UInt32, withNumberOfChannels numberOfChannels: UInt32, in audioFile: EZAudioFile!) {
+        
         DispatchQueue.main.async {[weak self] in
-			self?.updatePlaybackStatus()
-		}
-		self.waveVisualizer?.updateWaveWithBuffer(buffer, withBufferSize: bufferSize, withNumberOfChannels: numberOfChannels)
-	}
-	
-	public func audioPlayer(_ audioPlayer: EZAudioPlayer!, updatedPosition framePosition: Int64, in audioFile: EZAudioFile!) {
-		guard !beeingSeek else {
-			beeingSeek = false
-			return
-		}
-		
-		let duration = audioFile.duration
-		let progress = audioFile.totalFrames > 0 ? Float(framePosition) / Float(audioFile.totalFrames): 0
-		let isPlaying = audioPlayer.isPlaying
-		DispatchQueue.main.async {[weak sliderView, weak controlsView] in
-			controlsView?.isPlaying = isPlaying
-			sliderView?.duration = duration
-			sliderView?.progress = progress
-		}
-	}
-	
-	public func audioPlayer(_ audioPlayer: EZAudioPlayer!, reachedEndOf audioFile: EZAudioFile!) {
+            self?.updatePlaybackStatus()
+        }
+        self.waveVisualizer?.updateWaveWithBuffer(buffer, withBufferSize: bufferSize, withNumberOfChannels: numberOfChannels)
+    }
+    
+    public func audioPlayer(_ audioPlayer: EZAudioPlayer!, updatedPosition framePosition: Int64, in audioFile: EZAudioFile!) {
+        guard !beeingSeek else {
+            beeingSeek = false
+            return
+        }
+        
+        let duration = audioFile.duration
+        let progress = audioFile.totalFrames > 0 ? Float(framePosition) / Float(audioFile.totalFrames): 0
+        let isPlaying = audioPlayer.isPlaying
+        DispatchQueue.main.async {[weak sliderView, weak controlsView] in
+            controlsView?.isPlaying = isPlaying
+            sliderView?.duration = duration
+            sliderView?.progress = progress
+        }
+    }
+    
+    public func audioPlayer(_ audioPlayer: EZAudioPlayer!, reachedEndOf audioFile: EZAudioFile!) {
         guard !isRepeatModeOn else {
             DispatchQueue.main.async { [weak self] in
                 self?.reloadPlayer()
             }
             return
         }
-		guard self.currentSongIndex < library.count else {
-			return
-		}
-		
-		let newIndex = currentSongIndex < library.count - 1 ? currentSongIndex + 1: 0
-		DispatchQueue.main.async { [weak self] in
-			self?.currentSongIndex = newIndex
-		}
-	}
+        guard self.currentSongIndex < library.count else {
+            return
+        }
+        
+        let newIndex = currentSongIndex < library.count - 1 ? currentSongIndex + 1: 0
+        DispatchQueue.main.async { [weak self] in
+            self?.currentSongIndex = newIndex
+        }
+    }
 }

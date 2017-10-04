@@ -16,31 +16,32 @@ class MetaData {
     var artwork: UIImage? = UIImage(named: "default_cover")
     var albumName: String? = "Unknown"
     var artist: String? = "Unknown"
-	var duration: Float64 = 0
+    var duration: Float64 = 0
     
     init?(withAVPlayerItem item: AVPlayerItem?) {
-                
+        
         guard let playerItem = item else { return }
         let commonMetadata = playerItem.asset.commonMetadata
-		duration = CMTimeGetSeconds(playerItem.asset.duration)
-
+        duration = CMTimeGetSeconds(playerItem.asset.duration)
+        
         for metadataItem in commonMetadata {
             switch metadataItem.commonKey! {
-            case "title":
+            case AVMetadataKey.commonKeyTitle:
                 title = metadataItem.stringValue
-            case "creationDate":
+            case AVMetadataKey.commonKeyCreationDate:
                 break
-            case "artwork":
+            case AVMetadataKey.commonKeyArtwork:
                 if let imageData = metadataItem.value as? Data {
                     artwork = UIImage(data: imageData)
                 }
-            case "albumName":
+            case AVMetadataKey.commonKeyAlbumName:
                 albumName = metadataItem.stringValue
-            case "artist":
+            case AVMetadataKey.commonKeyArtist:
                 artist = metadataItem.stringValue
             default: break
             }
         }
+        updateNowPlaying()
     }
     
     init?(withMPMediaItem item: MPMediaItem?) {
@@ -50,12 +51,18 @@ class MetaData {
         albumName = playerItem.albumTitle
         artist = playerItem.artist
         duration = playerItem.playbackDuration
-        MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = [
-            MPMediaItemPropertyTitle: title,
+        updateNowPlaying()
+    }
+    
+    fileprivate func updateNowPlaying() {
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = [
+            MPMediaItemPropertyTitle: title ?? "",
             MPMediaItemPropertyAlbumTitle: albumName ?? "",
             MPMediaItemPropertyArtist: albumName ?? "",
             MPMediaItemPropertyPlaybackDuration: duration
         ]
-        MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo?[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(image: artwork)
+        if let art = artwork {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(image: art)
+        }
     }
 }
